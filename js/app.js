@@ -14,28 +14,32 @@ function submitTest()
 
     
 
-    printReply(customFieldCheck, falseData, "GET");
+    request(customFieldCheck, falseData, "GET", function(response) 
+    {
+        document.getElementById("target").value = response;
+        document.getElementById("btnCaller").disabled = false;
+    });
 
-    document.getElementById("btnCaller").disabled = false;
     return false;
 }
 
-function printReply(url, data, type)
+
+function request(url, data, reqType, hollaback) 
 {
+    // decare/initialize XMLHttpRequest
     var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
 
-    xhr.addEventListener("readystatechange", function () {
-    if (this.readyState === this.DONE) {
-        //console.log(this.responseText);
-        document.getElementById("target").value = JSON.stringify(JSON.parse(this.responseText), null, 2);
-    }
+    // set XMLHttpRequest
+    //xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function () 
+    {
+        if (this.readyState === this.DONE) 
+            if (typeof hollaback === 'function')
+                hollaback(xhr.response);
     });
-
-    xhr.open(type, url);
-    xhr.setRequestHeader("Authorization", "Bearer c73fb5ff-a4b5-4748-9606-fc8e19906923");
+    xhr.open(reqType, url);
+    //xhr.setRequestHeader("Authorization", "Bearer c73fb5ff-a4b5-4748-9606-fc8e19906923");
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(data);
-
     return false;
 }
